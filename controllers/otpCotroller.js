@@ -77,6 +77,24 @@ function generateOTP() {
     return otp;
   }
 
+// Verify the OTP provided by the user
+const verifyOTP = (userId, otp) => {
+    // Retrieve the stored OTP and expiration time associated with the user from the database or cache system
+    // Example: const { storedOTP, expirationTime } = getOTPFromDatabase(userId);
+    const storedOTP = '123456'; // Replace with your retrieval code
+    const expirationTime = 1621474566000; // Replace with your retrieval code
+  
+    if (otp === storedOTP && Date.now() < expirationTime) {
+      // OTP is valid and not expired
+      console.log(`OTP verification successful for user ${userId}`);
+      return true;
+    } else {
+      // OTP is invalid or expired
+      console.log(`OTP verification failed for user ${userId}`);
+      return false;
+    }
+  };
+
 
 
 module.exports = {
