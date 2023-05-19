@@ -6,6 +6,7 @@ const connectDB = require('./config/db')
 const port = process.env.port ||  5000
 const goalRoutes = require('./routes/goalRoutes')
 const userRoutes = require('./routes/userRoutes')
+const otpRoutes = require('./routes/otpRoutes')
 
 
 connectDB()
@@ -15,8 +16,10 @@ app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 
 
+
 app.use('/api/goals', goalRoutes)
 app.use('/api/users', userRoutes)
+app.use('/api/otp', otpRoutes)
 
 app.use(errorHandler)
 
