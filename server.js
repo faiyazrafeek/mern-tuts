@@ -7,6 +7,7 @@ const port = process.env.port ||  5000
 const goalRoutes = require('./routes/goalRoutes')
 const userRoutes = require('./routes/userRoutes')
 const otpRoutes = require('./routes/otpRoutes')
+const resetPasswordRoutes = require('./routes/resetPasswordRoutes')
 
 
 connectDB()
@@ -20,6 +21,7 @@ app.use(express.urlencoded({extended: false}))
 app.use('/api/goals', goalRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/otp', otpRoutes)
+app.use('/api/forgot-password', resetPasswordRoutes)
 
 app.use(errorHandler)
 

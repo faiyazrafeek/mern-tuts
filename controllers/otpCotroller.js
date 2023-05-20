@@ -5,8 +5,8 @@ const User = require('../model/userModel')
 
 
 // @desc    Send OTP
-// @route   GET /api/otp
-// @access  Private
+// @route   POST /api/otp/sendotp
+// @access  Public
 const sendOtp = asyncHandler(async (req, res) => {
     const email = req.params.email;
 
@@ -46,6 +46,9 @@ const sendOtp = asyncHandler(async (req, res) => {
      await User.findOneAndUpdate({ email }, { otp, otpExpiration });
 })
 
+// @desc    Verify OTP
+// @route   POST /api/otp/verifyotp
+// @access  Public
 const verifyOtp = asyncHandler(async (req, res) => {
   const { email, otp } = req.body;
 
