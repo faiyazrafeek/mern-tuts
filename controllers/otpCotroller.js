@@ -1,15 +1,21 @@
-const asyncHnadler = require('express-async-handler')
+const asyncHandler = require('express-async-handler')
 const nodemailer = require('nodemailer');
+
+const User = require('../model/userModel')
 
 
 // @desc    Send OTP
 // @route   GET /api/otp
 // @access  Private
-const sendOtp = asyncHnadler(async (req, res) => {
+const sendOtp = asyncHandler(async (req, res) => {
     const email = req.params.email;
 
     // Generate OTP
     const otp = generateOTP();
+
+    // Set OTP expiration time to 5 minutes from now
+    const otpExpiration = new Date();
+    otpExpiration.setMinutes(otpExpiration.getMinutes() + 2);
   
     // Compose the email
     const mailOptions = {
@@ -29,32 +35,38 @@ const sendOtp = asyncHnadler(async (req, res) => {
         res.send('OTP sent successfully');
       }
     });
+
+    const user = await User.findOne({ email });
+    
+    if (!user) {
+      res.status(404)
+      throw new Error('User not found')
+    }
+
+     await User.findOneAndUpdate({ email }, { otp, otpExpiration });
 })
 
-const verifyOtp = asyncHnadler(async (req, res) => {
-    const email = req.params.email;
+const verifyOtp = asyncHandler(async (req, res) => {
+  const { email, otp } = req.body;
 
-    // Generate OTP
-    const otp = generateOTP();
-  
-    // Compose the email
-    const mailOptions = {
-      from: 'fadesign001@gmail.com',
-      to: email,
-      subject: 'INORA App Login OTP Verification',
-      html: `<h2>Please find your OTP Below</h2><h2><bold>Your OTP is: ${otp}</bold></h2>`
-    };
-  
-    // Send the email
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log(error);
-        res.status(500).send('Failed to send OTP');
-      } else {
-        console.log('Email sent: ' + info.response);
-        res.send('OTP sent successfully');
-      }
-    });
+   // Find the user by email
+   const user = await User.findOne({ email });
+
+   if (!user) {
+     res.status(404).json({ error: 'User not found.' });
+   }
+
+    // Check if the OTP has expired
+    const now = new Date();
+    if (now > user.otpExpiration) {
+      res.status(400).json({ error: 'OTP has expired.'});
+      // Check if the OTP matches
+    }else if (user.otp === otp) {
+      // OTP is verified, you can perform further actions here
+      res.json({ message: 'OTP verified successfully.' });
+    } else {
+      res.status(400).json({ error: 'Invalid OTP.' });
+    }
 })
 
 // Configure Nodemailer

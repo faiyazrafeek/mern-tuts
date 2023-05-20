@@ -13,6 +13,12 @@ const userSchema = mongoose.Schema({
     password: {
         type: String,
         required: [true, 'Please add a password']
+    },
+    otp:{
+        type: String
+    },
+    otpExpiration:{
+        type: Date
     }
 }, {timestamps: true})
 
